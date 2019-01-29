@@ -1,0 +1,66 @@
+﻿@using GameStore.Web.Controllers
+@using GameStore.Web.PaymentStrategy
+@model GameStore.Domain.Core.DomainModels.Order
+
+@{
+    ViewBag.Title = "OrderDetails";
+}
+
+<h2>Order Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CustomerId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CustomerId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OrderDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrderDate)
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Logo</th>
+                <th>Title</th>
+                <th>Info</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><img src="~/Content/icon-bank.png" style="width: 5vw;"/></td>
+                <td>Bank</td>
+                <td>Pay by bank details</td>
+                <td class="text-center">@Html.ActionLink("Pay", "CreatePayment", "Payment", new { method = PaymentMethodsEnum.Bank, Model }, null)</td>
+            </tr>
+            <tr>
+                <td><img src="~/Content/iboxlogo.png" style="width: 5vw;" /></td>
+                <td>IBox</td>
+                <td>Pay through terminal</td>
+                <td class="text-center">@Html.ActionLink("Pay", "CreatePayment", "Payment", new { method = PaymentMethodsEnum.IBox, Model }, null)</td>
+            </tr>
+            <tr>
+                <td><img src="~/Content/visa-logo.png" style="width: 5vw;"/></td>
+                <td>Visa</td>
+                <td>Pay with Visa</td>
+                <td class="text-center">@Html.ActionLink("Pay", "CreatePayment", "Payment", new { method = PaymentMethodsEnum.Visa, Model }, null)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<p>
+    @Html.ActionLink("Back to Home", "GetAllGames", "Game")
+</p>

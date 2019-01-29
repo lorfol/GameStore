@@ -1,0 +1,103 @@
+﻿@using System.Globalization
+@model IList<GameStore.Web.ViewModels.BasketItemViewModel>
+
+@{
+    ViewBag.Title = "Basket";
+}
+
+<h2>Basket</h2>
+
+@{
+    decimal totalPrice = 0M;
+}
+
+<div>
+    <hr />
+    @if (ViewBag.IsEmpty == false)
+    {
+        using (Html.BeginForm("ConfirmOrder", "Order", FormMethod.Post))
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Key</th>
+                        <th>Genres</th>
+                        <th>Platforms</th>
+                        <th>Publishers</th>
+                        <th>Units in cart</th>
+                        <th>Price</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(x => Model[i].Name)
+                                @Html.HiddenFor(x => Model[i].Name)
+                                @Html.HiddenFor(x => Model[i].Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => Model[i].Key)
+                                @Html.HiddenFor(x => Model[i].Key)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => Model[i].Genres)
+                                @Html.HiddenFor(x => Model[i].Genres)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => Model[i].Platforms)
+                                @Html.HiddenFor(x => Model[i].Platforms)
+                            </td>
+                            <td>
+                                @foreach (var publisher in Model[i].Publishers)
+                                {
+                                    <div>@Html.ActionLink(publisher, "PublisherDetails", "Publisher", new { companyName = publisher }, null)</div>
+                                }
+
+                                @Html.HiddenFor(x => Model[i].Publishers)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => Model[i].UnitsInStock)
+                                @Html.HiddenFor(x => Model[i].UnitsInStock, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => Model[i].Price)
+                                @Html.HiddenFor(x => Model[i].Price)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Remove", "RemoveFromBasket", "Basket", new { gameKey = Model[i].Key }, null)
+                            </td>
+                        </tr>
+
+                        {
+                            totalPrice += Model[i].Price;
+                        }
+                    }
+
+                </tbody>
+            </table>
+
+            <input type="submit" value="Make order" />
+            <span>$@totalPrice.ToString(CultureInfo.InvariantCulture)</span>
+        }
+    }
+    else
+    {
+        <h3>
+            Your cart is empty. Buy something ^_^
+        </h3>
+    }
+</div>
+<p>
+    @Html.ActionLink("Back to List", "GetAllGames", "Game")
+</p>
+
+<script>
+    
+
+</script>

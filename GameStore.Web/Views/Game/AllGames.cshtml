@@ -1,0 +1,208 @@
+﻿@{
+    ViewBag.Title = "AllGames";
+}
+
+@using GameStore.Web.Controllers
+@using GameStore.Web.ViewModels
+@using PagedList.Mvc
+
+@model GamesWithFilterComplexModel
+
+<h2>All Games</h2>
+
+<div hidden class="alert alert-success" id="success-alert" style="position:fixed; right: 8vw; top: 8vh;">
+    <strong>Success! </strong>
+    Product have added to your cart.
+</div>
+
+<div hidden class="alert alert-warning" id="warning-alert" style="position:fixed; right: 8vw; top: 8vh;">
+    @*<button type="button" class="close" data-dismiss="alert">x</button>*@
+    <strong>Warning! </strong>
+    Not enough products in stock.
+</div>
+
+@if (Model.FilterOutput == null)
+{
+    Model.FilterOutput = Session["FilterState"] as FilterOutputModel;
+}
+
+<div id="mySidenav" class="sidenav">
+
+    @using (Html.BeginForm("GetAllGames", "Game", FormMethod.Get))
+    {
+        @Html.AntiForgeryToken()
+        @*<a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="position:fixed">&times;</a>*@
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-horizontal">
+
+            @Html.EditorFor(model => model.FilterOutput.FilterByName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Filter by name..." } })<br />
+            @Html.ValidationMessageFor(model => model.Filter.FilterByName, "", new { @class = "text-danger" })<br />
+            
+            @Html.EditorFor(model => model.FilterOutput.PriceFrom, new { htmlAttributes = new { @class = "form-control", @placeholder = "Price From..." } })<br/>
+            @Html.ValidationMessageFor(model => model.Filter.PriceFrom, "", new { @class = "text-danger" })<br />
+            
+            @Html.EditorFor(model => model.FilterOutput.PriceTo, new { htmlAttributes = new { @class = "form-control", @placeholder = "Price To..." } })<br />
+            @Html.ValidationMessageFor(model => model.Filter.PriceTo, "", new { @class = "text-danger" })<br />
+
+            @Html.ListBoxFor(x => x.FilterOutput.SelectedGenres, Model.Filter.AllGenres, new { @class = "chzn-select",  data_placeholder = "Filter by Genres..." })<br />
+            @Html.ValidationMessageFor(model => model.Filter.SelectedGenres, "", new { @class = "text-danger" })<br />
+            
+            @Html.ListBoxFor(x => x.FilterOutput.SelectedPlatforms, Model.Filter.AllPlatforms, new { @class = "chzn-select", data_placeholder = "Filter by Plarforms..." })<br />
+            @Html.ValidationMessageFor(model => model.Filter.SelectedPlatforms, "", new { @class = "text-danger" })<br />
+
+            @Html.ListBoxFor(x => x.FilterOutput.SelectedPublishers, Model.Filter.AllPublishers, new { @class = "chzn-select", data_placeholder = "Filter by Publishers..." })<br />
+            @Html.ValidationMessageFor(model => model.Filter.SelectedPublishers, "", new { @class = "text-danger" })<br />
+
+            @Html.EnumDropDownListFor(x => x.FilterOutput.OrderByOptions, "Filter by...", new { @class = "form-control" })<br/>
+            @Html.EnumDropDownListFor(x => x.FilterOutput.WhenPublished, "When published...", new { @class = "form-control" })<br />
+            
+            @Html.Label("Items per page")
+            @Html.DropDownListFor(x => x.FilterOutput.ItemsPerPage, Model.Filter.ItemsPerPage, new { @class = "form-control" })<br />
+
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Confirm filter" class="btn btn-primary" />
+            </div>
+        </div>
+    }
+</div>
+
+
+<!-- Use any element to open the sidenav -->
+<button onclick="openNav()" class="btn btn-default" style="float: right">Filter</button>
+
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Key</th>
+                <th>Genres</th>
+                <th>Platforms</th>
+                <th>Publishers</th>
+                <th>Comments</th>
+                <th>Units in stock</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.GameList)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Key
+                    </td>
+                    <td>
+                        @item.Genres
+                    </td>
+                    <td>
+                        @item.Platforms
+                    </td>
+                    <td>
+                        @foreach (var publisher in item.Publishers)
+                        {
+                            <div>@Html.ActionLink(publisher, "PublisherDetails", "Publisher", new { companyName = publisher }, null)</div>
+                        }
+                    </td>
+                    <td>
+                        @item.Comments.Count
+                    </td>
+                    <td>
+                        @item.UnitsInStock
+                    </td>
+                    <td>
+                        $ @item.Price
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", "GetGameDetails", "Game", new { key = item.Key }, null) |
+                        @Html.ActionLink("Edit", "EditGame", "Game", new { gameKey = item.Key }, null) |
+                        @Html.ActionLink("Delete", "DeleteGame", "Game", new { gameId = item.Id }, null) |
+
+                        @if (item.UnitsInStock > 0)
+                        {
+                            <a id="@item.Key" style="cursor: pointer">Buy</a>
+                        }
+                        else
+                        {
+                            <a title="Temporarily unavailable" style="pointer-events: none; cursor: default; color: gray">Buy</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<div class="text-center">
+    @Html.PagedListPager(Model.GameList, page => Url.Action("GetAllGames", new { page, filterOutput = Session["FilterState"] }), new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true, DisplayItemSliceAndTotal = true })
+</div>
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    <link href="@Url.Content("~/Content/chosen.min.css")" rel="stylesheet" type="text/css" />
+}
+
+
+<script>
+
+    $(function () {
+        $('body').on('click',
+            'a:contains("Buy")',
+            function (event) {
+                $(this)
+                $.ajax({
+                    url: `/game/${event.currentTarget.id}/buy`,
+                    method: 'GET',
+                    success: () => {
+                        $("#success-alert").show();
+                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+                            $("#success-alert").slideUp(500);
+                        });
+
+                        if (document.getElementById('cartBadge').innerText) {
+                            +document.getElementById('cartBadge').innerText++;
+                        } else {
+                            document.getElementById('cartBadge').innerText = 1;
+                        }
+                    },
+                    error: () => {
+                        $("#warning-alert").show();
+                        $("#warning-alert").fadeTo(2000, 500).slideUp(500, function () {
+                            $("#warning-alert").slideUp(500);
+                        });
+                    }
+                });
+            });
+    });
+
+    function openNav() {
+        var a = document.getElementById("mySidenav").style.width;
+        if (a == "300px") {
+            document.getElementById("mySidenav").style.width = "0";
+        } else {
+            document.getElementById("mySidenav").style.width = "300px";
+        }
+    }
+
+    /* Set the width of the side navigation to 0 */
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+
+    $(document).ready(function () {
+        $('.chzn-select').chosen();
+    });
+
+</script>

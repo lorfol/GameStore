@@ -1,0 +1,34 @@
+﻿using GameStore.Infrastructure.Data;
+using GameStore.Infrastructure.Data.Seeds;
+using GameStore.Web.IoC;
+using GameStore.Web.Mapping;
+using Ninject;
+using Ninject.Modules;
+using Ninject.Web.Mvc;
+using System.Data.Entity;
+using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
+
+namespace GameStore.Web
+{
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            Database.SetInitializer<GameStoreDbContext>(new GameStoreDbInitializer());
+
+            NinjectModule registrations = new NinjectRegistrations();
+            var kernel = new StandardKernel(registrations);
+            kernel.Unbind<ModelValidatorProvider>();
+            DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
+
+            AutoMapperConfiguration.Configure();
+        }
+    }
+}

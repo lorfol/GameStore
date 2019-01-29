@@ -1,0 +1,62 @@
+﻿@using System.Drawing
+@using GameStore.Web.ViewModels
+@using Microsoft.Ajax.Utilities
+@model IEnumerable<GameStore.Web.ViewModels.CommentViewModel>
+
+@{
+    ViewBag.Title = "CommentsForGame";
+}
+
+<h2>@ViewBag.GameKey Comments</h2>
+<hr />
+
+<div>
+    @foreach (var comment in Model)
+    {
+        @Html.Partial("CommentBlockPartial", comment)
+    }
+
+</div>
+
+
+@Scripts.Render("~/bundles/jqueryval")
+
+@Html.Partial("NewCommentForm", new CommentViewModel())
+
+<p>
+    @Html.ActionLink("Back", "GetGameDetails", "Game", new { key = ViewBag.GameKey }, null)
+</p>
+
+<script type="text/javascript">
+
+    // jQuery instead native js
+
+    $('.replyBtn').on("click",
+        function() {
+            $(`#reply_${this.id}`).modal('show');
+        });
+
+    $('.quoteBtn').on("click",
+        function() {
+            var commentText = $(`#body_${this.id}`).text();
+            var qoute = $(`#modalBody_${this.id}`);
+            qoute.val(commentText);
+
+            $(`#quote_${this.id}`).modal('show');
+        });
+
+    $('.deleteBtn').on("click",
+        function() {
+            const idStr = `delete_${this.id}`;
+
+            $(`#${idStr}`).modal('show');
+        });
+
+    $('.banBtn').on("click",
+        function () {
+            const idStr = `ban_${this.id}`;
+
+            $(`#${idStr}`).modal('show');
+        });
+
+</script>

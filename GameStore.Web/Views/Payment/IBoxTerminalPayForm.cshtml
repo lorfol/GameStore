@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewBag.Title = "IBoxTerminalPayForm";
+}
+
+<h2>IBox Terminal</h2> @*todo : create form*@
+
+@using (Html.BeginForm("DummyPaymentResponse", "Payment", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.Label("Operation number", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("cardNumber")
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Sum", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("sum")
+            </div>
+        </div>
+    </div>
+    <input type="submit" value="Pay" />
+}

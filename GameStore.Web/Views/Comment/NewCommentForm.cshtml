@@ -1,0 +1,117 @@
+﻿
+@using GameStore.Web.ViewModels
+@using Microsoft.Ajax.Utilities
+
+@model CommentViewModel
+
+
+<h4>New Comment</h4>
+
+
+@using (Html.BeginForm("LeaveCommentToGame", "Comment", FormMethod.Post))
+{
+    <div class="table-bordered">
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, new { @class = "control-label col-md-2" })
+            @Html.EditorFor(m => m.Name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+            @*@Html.Label("Name", new {@class = "control-label col-md-2"})
+        @Html.Editor("Name", new {@class = "form-control"})*@
+        </div>
+        <div class="form-group">
+            @Html.Label("Text", new { @class = "control-label col-md-2" })
+            @Html.TextAreaFor(m => m.Body, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+            @*@Html.Label("Text", new { @class = "control-label col-md-2" })
+        @Html.TextArea("Body", new { @class = "form-control" })*@
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-1 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+
+
+@*@foreach (var comment in Model)
+{
+    <dl>
+        <dt>
+            @Html.DisplayName("Name")
+        </dt>
+        <dd>
+            @Html.DisplayFor(c => comment.Name)
+        </dd>
+        <dt>
+            @Html.DisplayName("Text")
+        </dt>
+        <dd>
+            @Html.DisplayFor(c => comment.Body)
+        </dd>
+    </dl>
+    <div>
+        <button id="newReplyBtn" class="btn btn-default" onclick="newReplyForm">Reply</button> |
+        <button id="newReplyBtn" class="btn btn-default" onclick="newReplyForm">Quote</button> <!--TODO : quote-->
+    </div>
+    <hr />
+}*@
+
+
+
+@*<div id="comment">
+    <button id="newCommentBtn" class="btn btn-default" onclick="newCommentForm">Leave comment to game</button>
+</div>
+
+@using (Html.BeginForm("LeaveCommentToGame", "Comment", FormMethod.Post, new { id = "newCommentForm", style = "display:none" }))
+{
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.Label("Name", new { @class = "control-label col-md-2" })
+            @Html.Editor("Name", new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.Label("Text", new { @class = "control-label col-md-2" })
+            @Html.TextArea("Body", new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.ActionLink("Leave Comment", "LeaveCommentToGame", "Comment", new { }, new { @class = "btn btn-default" })
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+
+    var isFormOpen = true;
+
+    $(document).ready(function () {
+
+        $("#newCommentBtn").click(function () {
+
+            if (isFormOpen) {
+
+                document.getElementById("newCommentBtn").innerText = "Close form";
+
+                $("#newCommentForm").show();
+                isFormOpen = false;
+
+            } else {
+
+                document.getElementById("newCommentBtn").innerText = "Leave comment to game";
+                $("#newCommentForm").hide();
+                isFormOpen = true;
+            }
+        });
+    });
+
+
+</script>*@

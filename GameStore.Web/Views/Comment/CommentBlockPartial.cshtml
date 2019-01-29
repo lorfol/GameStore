@@ -1,0 +1,172 @@
+﻿
+@model GameStore.Web.ViewModels.CommentViewModel
+
+
+<dl id="comment" class="dl-horizontal">
+    @if (Model.Quote != String.Empty && Model.Quote != null)
+    {
+        if (Model.IsQuote)
+        {
+            <blockquote>
+                <q>@Model.Quote</q>
+            </blockquote>
+        }
+    }
+    <dt>
+        @Html.DisplayName("Name")
+    </dt>
+    <dd>
+        @Html.DisplayFor(c => Model.Name)
+    </dd>
+    <dt>
+        @Html.DisplayName("Text")
+    </dt>
+    <dd id="body_@Model.Id">
+        @if (!Model.IsDeleted)
+        {
+            @Html.DisplayFor(c => Model.Body)
+        }
+        else
+        {
+            <span style="color: red">Comment was deleted..</span>
+        }
+    </dd>
+</dl>
+
+    @if (!Model.IsDeleted)
+    {
+<div>
+    <button class="replyBtn" id="@Model.Id" @*onclick="newReply(this.id)"*@>Reply</button> |
+    <button class="quoteBtn" id="@Model.Id" @*onclick="quote(this.id)"*@>Quote</button> |
+    <button class="deleteBtn" id="@Model.Id" @*onclick="deleteComment(this.id)"*@>Delete</button> |
+    <button class="banBtn" id="@Model.Id" @*onclick="banComment(this.id)"*@>Ban</button>
+    <hr />
+</div>
+    }
+
+@if (Model.RepliesCollection.Count > 0)
+{
+    foreach (var comment in Model.RepliesCollection)
+    {
+        <ul style="margin-left: 30px;">
+            @Html.Partial("CommentBlockPartial", comment)
+        </ul>
+    }
+
+}
+
+@using (Html.BeginForm("Ban", "Comment", new { commentId = Model.Id, gameKey = ViewBag.GameKey }, FormMethod.Post))
+{
+    <div class="modal fade" id="ban_@Model.Id" role="dialog">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm delete</h4>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to <b>ban</b> this user?
+                </div>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <select class="center-block" name="duration">
+                            <option value="hour">1 hour</option>
+                            <option value="day">1 day</option>
+                            <option value="week">1 week</option>
+                            <option value="month">1 month</option>
+                            <option value="permanent">Permanent</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default">Ban</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-default">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("DeleteComment", "Comment", new { commentId = Model.Id, gameKey = ViewBag.GameKey }, FormMethod.Post))
+{
+    <div class="modal fade" id="delete_@Model.Id" role="dialog">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm delete</h4>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the comment?
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default">Yes</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-default">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("ReplyToComment", "Comment", new { parentCommentId = Model.Id, gameKey = ViewBag.GameKey }, FormMethod.Post))
+{
+    <div class="modal fade" id="reply_@Model.Id" role="dialog">
+        <div class="modal-dialog modal-lg center-block">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">New comment</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            @Html.Label("Name", new { @class = "control-label col-md-1" })
+                            <input name="Name" placeholder="Name..." />
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Text", new { @class = "control-label col-md-1" })
+                            <textarea name="Body" placeholder="Commentary..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default">Add</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("ReplyToComment", "Comment", new { parentCommentId = Model.Id, gameKey = ViewBag.GameKey }, FormMethod.Post))
+{
+    <div class="modal fade" id="quote_@Model.Id" role="dialog">
+        <div class="modal-dialog modal-lg center-block">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">New comment</h4>
+                </div>
+                <div class="modal-body">
+                    <blockquote>
+                        <input name="Quote" id="modalBody_@Model.Id" readonly="" />
+                    </blockquote>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            @Html.Label("Name", new { @class = "control-label col-md-1" })
+                            <input name="Name" placeholder="Name..." />
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Text", new { @class = "control-label col-md-1" })
+                            <textarea name="Body" placeholder="Commentary..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default">Add</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

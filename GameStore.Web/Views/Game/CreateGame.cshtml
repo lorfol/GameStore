@@ -1,0 +1,20 @@
+﻿@model GameStore.Web.ViewModels.CreateGameViewModel
+
+@{
+    ViewBag.Title = "CreateGame";
+}
+<h2>Create Game</h2>
+
+@Html.EditorForModel()
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/chosen.jquery.min.js")
+    <link href="@Url.Content("~/Content/chosen.min.css")" rel="stylesheet" type="text/css" />
+}
+
+<script>
+    $(document).ready(function () {
+        $('.chzn-select').chosen();
+    });
+</script>

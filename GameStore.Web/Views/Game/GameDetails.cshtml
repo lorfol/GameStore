@@ -1,0 +1,64 @@
+﻿@model GameStore.Web.ViewModels.GameViewModel
+
+@{
+    ViewBag.Title = "GameDetails";
+}
+
+<h2>Game Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Key)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Key)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Genres)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Genres)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Platforms)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Platforms)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AddingDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AddingDate.Date)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CountOfViews)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CountOfViews)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "GetAllGames") |
+    @Html.ActionLink("Download", "DownloadGame", new { gameKey = Model.Key }, new { target = "_blanc" }) |
+    @Html.ActionLink("Comments", "GetAllCommentsByGameKey", "Comment", new { gameKey = Model.Key }, null)
+
+    @*<button onclick="showOrHideComments">Comments</button>*@
+    @*@Ajax.ActionLink("Show Comments", "GetAllCommentsByGameKey", "Comment", new { gameKey = Model.Key }, new AjaxOptions { UpdateTargetId = "incertElement" }) |
+        @Html.ActionLink("Buy", "AddToBasket", "Basket", new { gameKey = Model.Key }, null)*@
+</p>
